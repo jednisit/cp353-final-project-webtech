@@ -1,0 +1,328 @@
+openapi: 3.0.0
+info:
+  title: Listening to music
+  version: 1.0.0
+  description: This is description about a music.
+  
+paths:
+
+  /authentication/token:
+    post:
+      tags:
+        - Authentication
+      summary: Authentication
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+        '204':
+          description: Username or Password not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthError"
+
+
+  /lyrics/{string:title}/{string:artist}:
+    get:
+      parameters:
+        - in: path
+          name: string:title
+          required: true
+          schema:
+            type: string
+            example: Heartbreak Anniversary
+        - in: path
+          name: string:artist
+          required: true
+          schema:
+            type: string
+            example: Heartbreak Anniversary
+      responses:
+        '200':
+          description: Music operations
+        '500':
+          $ref: '#/components/responses/500ApiError'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/music'
+  
+  /music/{string:title}/{string:artist}:
+    get:
+      parameters:
+        - in: path
+          name: string:title
+          required: true
+          schema:
+            type: string
+            example: Stuck On You
+        - in: path
+          name: string:artist
+          required: true
+          schema:
+            type: string
+            example: Giveon
+            
+            
+      responses:
+        '200':
+          description: Checkmusic operations
+        '500':
+          $ref: '#/components/responses/500ApiError'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/music'
+            
+  
+  
+ 
+  /sing/{title}:
+    delete:
+      parameters:
+        - in: path
+          name: title
+          required: true
+          schema:
+            type: string
+            example: Blueberry Faygo
+      responses:
+        '201':
+          description: The song has been delete.
+        '500':
+          $ref: '#/components/responses/500ApiError'
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/song'
+               
+               
+  /song/{type}:
+    put:
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            example: Blueberry Faygo
+      responses:
+        '200':
+          description: The song has been update.
+        '500':
+          $ref: '#/components/responses/500ApiError'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/song'
+                
+  /song/{type}/{title}:
+    post:
+      parameters:
+        - in: path
+          name: type
+          required: true
+          schema:
+            type: string
+            example: Blueberry Faygo
+        - in: path
+          name: title
+          required: true
+          schema:
+            type: string
+            example: Blueberry Faygo
+      description: Add a new music 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/song'
+          application/xml:
+              schema:
+                $ref: '#/components/schemas/song'
+      responses:
+        '200':
+          description: The music has been created.
+        '500':
+          $ref: '#/components/responses/500ApiError'
+ 
+  /video/{string:title}:
+    get:
+      parameters:
+        - in: path
+          name: string:title
+          required: true
+          schema:
+            type: string
+            example: Heartbreak Anniversary
+      responses:
+        '200':
+          description: Music operations
+        '500':
+          $ref: '#/components/responses/500ApiError'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/music'
+components:
+  schemas:
+    song:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Life Goes On
+        artist:
+          type: string
+          example: Post Malone
+        album:
+          type: string
+          example: Stoney
+        year:
+          type: integer
+          example: 2020
+        country:
+          type: string
+          example: American
+        genre:
+          type: string
+          example: Hip-Hop/Rap
+        web_url:
+          type: string
+          example: https://genius.com/Post-malone-go-flex-lyrics
+        img_url:
+          type: string
+          example: https://i.ytimg.com/vi/tQjsAJhsSw8/maxresdefault.jpg
+        yt_url:
+          type: string
+          example: tQjsAJhsSw8
+       
+      required: 
+        - title
+    title:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Yummy
+        artist:
+          type: string
+          example: Justin Bieber
+    music:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Pop Out
+        artist:
+          type: string
+          example: Polo G Feat. Lil Tjay
+          
+    OAuthError:
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+          
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+          format: int64
+        refresh_token:
+          type: string
+       
+    
+  responses:
+    200OK:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                example: 200
+              message:
+                type: string
+                example: This is success.
+    201OK:
+      description: Update
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                example: 200
+              message:
+                type: string
+                example: This is uu.
+    500ApiError:
+      description: This is unexpected
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: string
+                example: 500
+              message:
+                type: string
+                example: This is an error
+                
+   
+    '401':
+      description: Unauthorize
+      content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Token has expired
+    '204':
+      description: Food name not found
+      content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: not found
